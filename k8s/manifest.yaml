@@ -1,0 +1,99 @@
+# skirmshop-chatbot — k8s manifests (skirmshop namespace, edge node = sauvage)
+# Secret `chatbot-secrets` is created out-of-band from the app's runtime env
+# (no vault CLI available yet; migrate to ExternalSecret/Vault later).
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatbot-redis
+  namespace: skirmshop
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: chatbot-redis } }
+  template:
+    metadata: { labels: { app: chatbot-redis } }
+    spec:
+      nodeSelector: { role: edge, kubernetes.io/arch: amd64 }
+      tolerations:
+        - { key: role, operator: Equal, value: edge, effect: NoSchedule }
+      containers:
+        - name: redis
+          image: redis:8.0.0
+          args: ["--save", "", "--appendonly", "no"]   # cache/session only; chat history lives in SQLite
+          ports: [{ containerPort: 6379 }]
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits: { memory: 128Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: chatbot-redis, namespace: skirmshop }
+spec:
+  selector: { app: chatbot-redis }
+  ports: [{ port: 6379, targetPort: 6379 }]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: chatbot-data, namespace: skirmshop }
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path   # longhorn CSI is not on the sauvage edge node; pod is pinned here + single replica
+  resources: { requests: { storage: 1Gi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skirmshop-chatbot
+  namespace: skirmshop
+spec:
+  replicas: 1
+  strategy: { type: Recreate }   # RWO PVC: avoid two pods mounting during rollout
+  selector: { matchLabels: { app: skirmshop-chatbot } }
+  template:
+    metadata: { labels: { app: skirmshop-chatbot } }
+    spec:
+      enableServiceLinks: false
+      imagePullSecrets: [{ name: harbor-pull }]
+      nodeSelector: { role: edge, kubernetes.io/arch: amd64 }
+      tolerations:
+        - { key: role, operator: Equal, value: edge, effect: NoSchedule }
+      containers:
+        - name: chatbot
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot:v1
+          imagePullPolicy: IfNotPresent
+          ports: [{ name: http, containerPort: 3100 }]
+          envFrom: [{ secretRef: { name: chatbot-secrets } }]
+          env:
+            # cluster-correct overrides (win over envFrom)
+            - { name: PORT, value: "3100" }
+            - { name: NODE_ENV, value: "production" }
+            - { name: POCHARLIES_URL, value: "http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local" }
+            - { name: REDIS_URL, value: "redis://chatbot-redis.skirmshop.svc.cluster.local:6379/2" }
+            - { name: DATABASE_URL, value: "file:/app/prisma/data/chatbot.db" }
+            - { name: LLM_BASE_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
+            - { name: EMBEDDING_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
+          volumeMounts:
+            - { name: data, mountPath: /app/prisma/data }
+          resources:
+            requests: { cpu: 50m, memory: 192Mi }
+            limits: { memory: 768Mi }
+          readinessProbe:
+            tcpSocket: { port: 3100 }
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: 3100 }
+            initialDelaySeconds: 45
+            periodSeconds: 20
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: chatbot-data }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: skirmshop-chatbot, namespace: skirmshop }
+spec:
+  selector: { app: skirmshop-chatbot }
+  ports: [{ name: http, port: 80, targetPort: 3100 }]
+# IngressRoute (public /chatbot) lives in ingressroute.yaml — applied at cutover
+# to avoid conflicting with the legacy-compat route while we verify.
