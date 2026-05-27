@@ -1,0 +1,121 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: chatbot-sync
+  namespace: skirmshop
+  annotations:
+    migration.e-dani.com/source-cron: "*/5 * * * * /home/ubuntu/skirmshop/skirmshop-monitoring/scripts/chatbot-sync.py"
+spec:
+  schedule: "*/5 * * * *"
+  timeZone: Europe/Madrid
+  suspend: true
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 300
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          restartPolicy: Never
+          hostNetwork: true
+          dnsPolicy: ClusterFirstWithHostNet
+          imagePullSecrets:
+            - name: harbor-pull
+          nodeSelector:
+            role: edge
+            kubernetes.io/arch: amd64
+          tolerations:
+            - key: role
+              operator: Equal
+              value: edge
+              effect: NoSchedule
+          containers:
+            - name: chatbot-sync
+              image: harbor.e-dani.com/homelab/skirmshop-chatbot-monitoring@sha256:7a3f25a3f2dd9e6be75cbcceb62e789ec3c2adeed300406700f7ba8be4e26fed
+              imagePullPolicy: IfNotPresent
+              args: ["/opt/chatbot-monitoring/chatbot_sync.py"]
+              envFrom:
+                - secretRef:
+                    name: chatbot-report-secrets
+              env:
+                - name: SQLITE_PATH
+                  value: /app/prisma/data/chatbot.db
+              volumeMounts:
+                - name: data
+                  mountPath: /app/prisma/data
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 96Mi
+                limits:
+                  memory: 256Mi
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: chatbot-data
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: chatbot-daily-report
+  namespace: skirmshop
+  annotations:
+    migration.e-dani.com/source-cron: "0 8 * * * /home/ubuntu/skirmshop/skirmshop-monitoring/scripts/chatbot-daily-report.py"
+spec:
+  schedule: "0 8 * * *"
+  timeZone: Europe/Madrid
+  suspend: true
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 600
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          restartPolicy: Never
+          hostNetwork: true
+          dnsPolicy: ClusterFirstWithHostNet
+          imagePullSecrets:
+            - name: harbor-pull
+          nodeSelector:
+            role: edge
+            kubernetes.io/arch: amd64
+          tolerations:
+            - key: role
+              operator: Equal
+              value: edge
+              effect: NoSchedule
+          containers:
+            - name: chatbot-daily-report
+              image: harbor.e-dani.com/homelab/skirmshop-chatbot-monitoring@sha256:7a3f25a3f2dd9e6be75cbcceb62e789ec3c2adeed300406700f7ba8be4e26fed
+              imagePullPolicy: IfNotPresent
+              args: ["/opt/chatbot-monitoring/chatbot_daily_report.py"]
+              envFrom:
+                - secretRef:
+                    name: chatbot-report-secrets
+              env:
+                - name: SQLITE_PATH
+                  value: /app/prisma/data/chatbot.db
+              volumeMounts:
+                - name: data
+                  mountPath: /app/prisma/data
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 96Mi
+                limits:
+                  memory: 256Mi
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: chatbot-data

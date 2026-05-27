@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  standard:
+    uses: pocharlies-org/k8s-gitops-pocharlies/.github/workflows/reusable-ci.yml@main
+    with:
+      runner: arc-k8s
+      run_node: false
+      run_docker_build: true
+      images: '[{"name":"skirmshop-chatbot-monitoring","context":"cron","dockerfile":"cron/Dockerfile"}]'
+      kustomize_paths: ". k8s"
+    secrets: inherit
