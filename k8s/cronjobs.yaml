@@ -8,7 +8,7 @@ metadata:
 spec:
   schedule: "*/5 * * * *"
   timeZone: Europe/Madrid
-  suspend: true
+  suspend: false
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 120
   successfulJobsHistoryLimit: 3
@@ -69,7 +69,7 @@ metadata:
 spec:
   schedule: "0 8 * * *"
   timeZone: Europe/Madrid
-  suspend: true
+  suspend: false
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 600
   successfulJobsHistoryLimit: 3
