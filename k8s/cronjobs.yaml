@@ -35,7 +35,7 @@ spec:
               effect: NoSchedule
           containers:
             - name: chatbot-sync
-              image: harbor.e-dani.com/homelab/skirmshop-chatbot-monitoring@sha256:7a3f25a3f2dd9e6be75cbcceb62e789ec3c2adeed300406700f7ba8be4e26fed
+              image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot-monitoring@sha256:7a3f25a3f2dd9e6be75cbcceb62e789ec3c2adeed300406700f7ba8be4e26fed
               imagePullPolicy: IfNotPresent
               args: ["/opt/chatbot-monitoring/chatbot_sync.py"]
               envFrom:
@@ -96,7 +96,7 @@ spec:
               effect: NoSchedule
           containers:
             - name: chatbot-daily-report
-              image: harbor.e-dani.com/homelab/skirmshop-chatbot-monitoring@sha256:7a3f25a3f2dd9e6be75cbcceb62e789ec3c2adeed300406700f7ba8be4e26fed
+              image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot-monitoring@sha256:7a3f25a3f2dd9e6be75cbcceb62e789ec3c2adeed300406700f7ba8be4e26fed
               imagePullPolicy: IfNotPresent
               args: ["/opt/chatbot-monitoring/chatbot_daily_report.py"]
               envFrom:
