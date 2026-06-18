@@ -59,7 +59,7 @@ spec:
         - { key: role, operator: Equal, value: edge, effect: NoSchedule }
       containers:
         - name: chatbot
-          image: harbor.e-dani.com/homelab/skirmshop-chatbot:v8
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:382ee6a0750e685d658798220276e2d581924420b5e4ab1bb57b366f93dd18a4
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom: [{ secretRef: { name: chatbot-secrets } }]
@@ -68,6 +68,8 @@ spec:
             - { name: PORT, value: "3100" }
             - { name: NODE_ENV, value: "production" }
             - { name: POCHARLIES_URL, value: "http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local" }
+            - name: BRAIN_API_KEY
+              valueFrom: { secretKeyRef: { name: rag-secrets, key: BRAIN_API_KEY } }
             - { name: REDIS_URL, value: "redis://chatbot-redis.skirmshop.svc.cluster.local:6379/2" }
             - { name: DATABASE_URL, value: "file:/app/prisma/data/chatbot.db" }
             - { name: LLM_BASE_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
