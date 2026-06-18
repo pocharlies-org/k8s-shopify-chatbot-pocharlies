@@ -80,12 +80,12 @@ spec:
             requests: { cpu: 50m, memory: 192Mi }
             limits: { memory: 768Mi }
           readinessProbe:
-            httpGet: { path: /health, port: 3100 }
+            tcpSocket: { port: 3100 }
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 3
           livenessProbe:
-            httpGet: { path: /health, port: 3100 }
+            tcpSocket: { port: 3100 }
             initialDelaySeconds: 45
             periodSeconds: 20
             timeoutSeconds: 3
