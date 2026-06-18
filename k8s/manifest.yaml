@@ -59,7 +59,7 @@ spec:
         - { key: role, operator: Equal, value: edge, effect: NoSchedule }
       containers:
         - name: chatbot
-          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:382ee6a0750e685d658798220276e2d581924420b5e4ab1bb57b366f93dd18a4
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:51736d4cb211819809996651d8864c0a39c828d68ae25dc3ba593ad86e4fac0c
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom: [{ secretRef: { name: chatbot-secrets } }]
