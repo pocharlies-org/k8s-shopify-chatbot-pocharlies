@@ -59,7 +59,7 @@ spec:
         - { key: role, operator: Equal, value: edge, effect: NoSchedule }
       containers:
         - name: chatbot
-          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:fe2fd527b185cf27dac988c059059bdea9dae2cff5f0cdfaa189f4dcb285d4f5
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:3947a5d4d72fb6801876a8e4d9dab773e8262fad7f9e91b6f40dc9af78743ad8
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom: [{ secretRef: { name: chatbot-secrets } }]
@@ -67,15 +67,19 @@ spec:
             # cluster-correct overrides (win over envFrom)
             - { name: PORT, value: "3100" }
             - { name: NODE_ENV, value: "production" }
-            - { name: POCHARLIES_URL, value: "http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local" }
+            - { name: OPENCLAW_BINARY, value: "openclaw" }
+            - { name: OPENCLAW_AGENT_ID, value: "customersupport" }
+            - { name: OPENCLAW_TIMEOUT_SECONDS, value: "120" }
+            - { name: BRAIN_URL, value: "https://brain-k8s.lan.e-dani.com" }
             - name: BRAIN_API_KEY
               valueFrom: { secretKeyRef: { name: rag-secrets, key: BRAIN_API_KEY } }
-            - { name: REDIS_URL, value: "redis://chatbot-redis.skirmshop.svc.cluster.local:6379/2" }
-            - { name: DATABASE_URL, value: "file:/app/prisma/data/chatbot.db" }
-            - { name: LLM_BASE_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
-            - { name: EMBEDDING_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
+            - name: SHOPIFY_APP_SECRET
+              valueFrom: { secretKeyRef: { name: chatbot-secrets, key: SHOPIFY_WEBHOOK_SECRET } }
+            - name: OPENAI_API_KEY
+              valueFrom: { secretKeyRef: { name: chatbot-secrets, key: LLM_API_KEY } }
+            - { name: SUPPORT_DB_PATH, value: "/data/support.db" }
           volumeMounts:
-            - { name: data, mountPath: /app/prisma/data }
+            - { name: data, mountPath: /data }
           resources:
             requests: { cpu: 50m, memory: 192Mi }
             limits: { memory: 768Mi }
