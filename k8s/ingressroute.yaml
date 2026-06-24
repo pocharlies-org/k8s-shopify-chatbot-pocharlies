@@ -16,6 +16,7 @@ spec:
   routes:
     - match: Host(`skirmshop.e-dani.com`) && PathPrefix(`/chatbot`)
       kind: Rule
+      priority: 2000
       middlewares:
         - name: strip-chatbot
           namespace: traefik-edge
