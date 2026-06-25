@@ -40,6 +40,14 @@ spec:
   storageClassName: local-path   # longhorn CSI is not on the sauvage edge node; pod is pinned here + single replica
   resources: { requests: { storage: 1Gi } }
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: openclaw-state, namespace: skirmshop }
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources: { requests: { storage: 2Gi } }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -54,24 +62,32 @@ spec:
     spec:
       enableServiceLinks: false
       imagePullSecrets: [{ name: harbor-pull }]
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
       nodeSelector: { role: edge, kubernetes.io/arch: amd64 }
       tolerations:
         - { key: role, operator: Equal, value: edge, effect: NoSchedule }
       containers:
         - name: chatbot
-          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:1a421fb2fc09625061562046ef1272509809a9580e7438c84f17725218d3416d
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:e5fd131c9a534e8d9a160a1230ec21ac0c7b01ad5abcc74d7142546fe494eb80
           imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-lc"]
+          args: ["./scripts/start-gateway.sh"]
           ports: [{ name: http, containerPort: 3100 }]
           envFrom: [{ secretRef: { name: chatbot-secrets } }]
           env:
             # cluster-correct overrides (win over envFrom)
             - { name: PORT, value: "3100" }
             - { name: NODE_ENV, value: "production" }
-            - { name: OPENCLAW_BINARY, value: "openclaw" }
+            - { name: OPENCLAW_BINARY, value: "/app/node_modules/.bin/openclaw" }
+            - { name: OPENCLAW_HOME, value: "/home/node/.openclaw" }
             - { name: OPENCLAW_AGENT_ID, value: "customersupport" }
-            - { name: OPENCLAW_TIMEOUT_SECONDS, value: "45" }
-            - { name: OPENCLAW_PRIMARY_UNAVAILABLE_SECONDS, value: "3600" }
-            - { name: OPENCLAW_SKIP_PRIMARY_ON_START, value: "true" }
+            - { name: OPENCLAW_TIMEOUT_SECONDS, value: "35" }
+            - { name: OPENCLAW_START_GATEWAY, value: "true" }
+            - { name: OPENCLAW_GATEWAY_PORT, value: "18789" }
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom: { secretKeyRef: { name: chatbot-secrets, key: OPENCLAW_GATEWAY_TOKEN } }
             - { name: BRAIN_URL, value: "https://brain-k8s.lan.e-dani.com" }
             - name: BRAIN_API_KEY
               valueFrom: { secretKeyRef: { name: rag-secrets, key: BRAIN_API_KEY } }
@@ -79,14 +95,19 @@ spec:
               valueFrom: { secretKeyRef: { name: chatbot-secrets, key: SHOPIFY_WEBHOOK_SECRET } }
             - name: LITELLM_API_KEY
               valueFrom: { secretKeyRef: { name: rag-litellm-key, key: LITELLM_KEY } }
-            - name: OPENAI_API_KEY
-              valueFrom: { secretKeyRef: { name: chatbot-secrets, key: OPENAI_API_KEY } }
             - { name: SUPPORT_DB_PATH, value: "/data/support.db" }
           volumeMounts:
             - { name: data, mountPath: /data }
+            - { name: openclaw-state, mountPath: /home/node/.openclaw }
           resources:
             requests: { cpu: 50m, memory: 192Mi }
             limits: { memory: 768Mi }
+          startupProbe:
+            tcpSocket: { port: 3100 }
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            timeoutSeconds: 3
+            failureThreshold: 120
           readinessProbe:
             tcpSocket: { port: 3100 }
             initialDelaySeconds: 15
@@ -100,6 +121,8 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim: { claimName: chatbot-data }
+        - name: openclaw-state
+          persistentVolumeClaim: { claimName: openclaw-state }
 ---
 apiVersion: v1
 kind: Service
