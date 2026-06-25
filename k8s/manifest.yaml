@@ -59,7 +59,7 @@ spec:
         - { key: role, operator: Equal, value: edge, effect: NoSchedule }
       containers:
         - name: chatbot
-          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:0a7a1b4916627cf40bb9c6d7b57121ed7e99366929afdd895641ee57515c1921
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:041128f31658ac0d7af5206c8649b66f53277427e9cf747839afd80535bd0718
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom: [{ secretRef: { name: chatbot-secrets } }]
@@ -77,6 +77,8 @@ spec:
               valueFrom: { secretKeyRef: { name: chatbot-secrets, key: SHOPIFY_WEBHOOK_SECRET } }
             - name: LITELLM_API_KEY
               valueFrom: { secretKeyRef: { name: rag-litellm-key, key: LITELLM_KEY } }
+            - name: OPENAI_API_KEY
+              valueFrom: { secretKeyRef: { name: chatbot-secrets, key: OPENAI_API_KEY } }
             - { name: SUPPORT_DB_PATH, value: "/data/support.db" }
           volumeMounts:
             - { name: data, mountPath: /data }
