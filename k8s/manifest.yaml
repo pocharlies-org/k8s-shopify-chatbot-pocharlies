@@ -59,7 +59,7 @@ spec:
         - { key: role, operator: Equal, value: edge, effect: NoSchedule }
       containers:
         - name: chatbot
-          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:6e723e6ebff4a9763a4329b63e10033c96cf35f4547f921f3c8ada8f3b3afb7e
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:3fe4e40669777764fc516fed82d081ed0811c3e577c457a01db5fcd8168e3f72
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom: [{ secretRef: { name: chatbot-secrets } }]
@@ -69,7 +69,9 @@ spec:
             - { name: NODE_ENV, value: "production" }
             - { name: OPENCLAW_BINARY, value: "openclaw" }
             - { name: OPENCLAW_AGENT_ID, value: "customersupport" }
-            - { name: OPENCLAW_TIMEOUT_SECONDS, value: "20" }
+            - { name: OPENCLAW_TIMEOUT_SECONDS, value: "45" }
+            - { name: OPENCLAW_PRIMARY_UNAVAILABLE_SECONDS, value: "3600" }
+            - { name: OPENCLAW_SKIP_PRIMARY_ON_START, value: "true" }
             - { name: BRAIN_URL, value: "https://brain-k8s.lan.e-dani.com" }
             - name: BRAIN_API_KEY
               valueFrom: { secretKeyRef: { name: rag-secrets, key: BRAIN_API_KEY } }
