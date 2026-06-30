@@ -4,7 +4,7 @@ GitOps manifests for **skirmshop-chatbot** (NestJS storefront chat) deployed to 
 `skirmshop` namespace on the k3s cluster, managed by ArgoCD.
 
 ## Layout
-- `k8s/manifest.yaml` — Deployment (`skirmshop-chatbot`) + `chatbot-redis` + `local-path` PVC + Services
+- `k8s/manifest.yaml` — Deployment (`skirmshop-chatbot`) + `local-path` PVCs + Service
 - `k8s/ingressroute.yaml` — public route `skirmshop.e-dani.com/chatbot` (traefik-edge, `strip-chatbot` middleware)
 - `k8s/kustomization.yaml`
 
@@ -12,7 +12,6 @@ GitOps manifests for **skirmshop-chatbot** (NestJS storefront chat) deployed to 
 - Runs on the **edge node (`sauvage`)** → reaches the brain via the in-cluster service.
 - `POCHARLIES_URL` → `http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local` (brain v2)
 - `LLM_BASE_URL` → `http://litellm.litellm.svc.cluster.local:4000/v1`
-- `REDIS_URL` → `chatbot-redis.skirmshop.svc.cluster.local:6379/2`
 - SQLite on a `local-path` PVC (longhorn isn't on the edge node); app self-migrates (`prisma migrate deploy`).
 
 ## Secrets
