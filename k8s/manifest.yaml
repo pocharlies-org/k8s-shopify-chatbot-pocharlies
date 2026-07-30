@@ -39,7 +39,7 @@ spec:
         - { key: role, operator: Equal, value: edge, effect: NoSchedule }
       containers:
         - name: chatbot
-          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:0669272ba7712079b900548aefad32cdff7fb6677562154f70976a07c85b46bc
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:13308799111b3c94d8ad6ef16afbb2692bdb3bf86428797ca3945ccf03b8cf67
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-lc"]
           args: ["./scripts/start-gateway.sh"]
