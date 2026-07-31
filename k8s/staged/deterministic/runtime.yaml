@@ -1,0 +1,171 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chatbot-deterministic-config
+  namespace: skirmshop
+data:
+  COMMERCE_REGISTRY_JSON: |-
+    [
+      {
+        "installationExternalId": "skirmshop-spain.myshopify.com",
+        "tenantContext": {
+          "contractType": "tenant_context",
+          "schemaVersion": "1.0",
+          "tenantId": "807a4817-b73a-42ce-8954-8dd5dc80b751",
+          "tenantKey": "skirmshop",
+          "storeId": "269d0560-9c16-4db8-86e4-52867efc1901",
+          "channelKind": "web",
+          "channelInstallationId": "34a14c67-ecd6-4598-940f-484a402c33c0",
+          "renderProfileId": "shop.web.v1",
+          "isolationProfile": "logical",
+          "machineVersion": "shop-agent.v1",
+          "configVersion": 1,
+          "policyVersion": 1,
+          "policyCapabilities": ["catalog.search", "brain.relations.read", "customer_accounts.orders.read", "labels.shipments.read"],
+          "providerBindings": {
+            "storefront": {"providerKind": "storefront", "bindingId": "7ff2db83-415a-40a9-b5b1-95b44d164fbb", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "customerAccounts": {"providerKind": "customer_accounts", "bindingId": "1867acab-0c3e-44cf-bbb2-d6ab109c8504", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "brainRelations": {"providerKind": "brain_relations", "bindingId": "54d94645-7f69-404f-954e-edeb105bd215", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "labels": {"providerKind": "labels", "bindingId": "d9188e91-b282-4878-a24e-933611c94d84", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"}
+          },
+          "resolutionProofRef": "tenant-resolution:97995dc1-b2bd-4e05-8572-e1ea15c8323a"
+        },
+        "brain": {"baseUrl": "http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080", "instanceId": "skirmshop", "apiKeyEnv": "BRAIN_RELATIONS_API_KEY", "allowedOrigins": ["http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080"]},
+        "customerAccounts": {"shopDomain": "skirmshop-spain.myshopify.com", "accessTokenEnv": "SHOPIFY_ADMIN_TOKEN"},
+        "labels": {"baseUrl": "http://labels-shopify-app.skirmshop.svc.cluster.local:3004", "internalApiTokenEnv": "LABELS_INTERNAL_API_TOKEN", "defaultLocale": "es-ES", "allowedOrigins": ["http://labels-shopify-app.skirmshop.svc.cluster.local:3004"]}
+      },
+      {
+        "installationExternalId": "skirmshop-whatsapp-professional",
+        "channelIngressTokenEnv": "COMMERCE_CHANNEL_TOKEN_WHATSAPP",
+        "channelIdentityAssertionSecretEnv": "COMMERCE_IDENTITY_SECRET_WHATSAPP",
+        "storefrontBaseUrl": "https://skirmshop.es",
+        "tenantContext": {
+          "contractType": "tenant_context", "schemaVersion": "1.0", "tenantId": "807a4817-b73a-42ce-8954-8dd5dc80b751", "tenantKey": "skirmshop", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901", "channelKind": "whatsapp", "channelInstallationId": "fd5befe1-fdb6-48ba-adb9-7d6ea5a60a45", "renderProfileId": "shop.whatsapp.v1", "isolationProfile": "logical", "machineVersion": "shop-agent.v1", "configVersion": 1, "policyVersion": 1,
+          "policyCapabilities": ["catalog.search", "brain.relations.read", "customer_accounts.orders.read", "labels.shipments.read"],
+          "providerBindings": {
+            "storefront": {"providerKind": "storefront", "bindingId": "7ff2db83-415a-40a9-b5b1-95b44d164fbb", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "customerAccounts": {"providerKind": "customer_accounts", "bindingId": "1867acab-0c3e-44cf-bbb2-d6ab109c8504", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "brainRelations": {"providerKind": "brain_relations", "bindingId": "54d94645-7f69-404f-954e-edeb105bd215", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "labels": {"providerKind": "labels", "bindingId": "d9188e91-b282-4878-a24e-933611c94d84", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"}
+          },
+          "resolutionProofRef": "tenant-resolution:d3d55a7f-5161-4f87-851b-c779c9e50aa0"
+        },
+        "brain": {"baseUrl": "http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080", "instanceId": "skirmshop", "apiKeyEnv": "BRAIN_RELATIONS_API_KEY", "allowedOrigins": ["http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080"]},
+        "customerAccounts": {"shopDomain": "skirmshop-spain.myshopify.com", "accessTokenEnv": "SHOPIFY_ADMIN_TOKEN"},
+        "labels": {"baseUrl": "http://labels-shopify-app.skirmshop.svc.cluster.local:3004", "internalApiTokenEnv": "LABELS_INTERNAL_API_TOKEN", "defaultLocale": "es-ES", "allowedOrigins": ["http://labels-shopify-app.skirmshop.svc.cluster.local:3004"]}
+      },
+      {
+        "installationExternalId": "skirmshop-telegram-customer",
+        "channelIngressTokenEnv": "COMMERCE_CHANNEL_TOKEN_TELEGRAM",
+        "channelIdentityAssertionSecretEnv": "COMMERCE_IDENTITY_SECRET_TELEGRAM",
+        "storefrontBaseUrl": "https://skirmshop.es",
+        "tenantContext": {
+          "contractType": "tenant_context", "schemaVersion": "1.0", "tenantId": "807a4817-b73a-42ce-8954-8dd5dc80b751", "tenantKey": "skirmshop", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901", "channelKind": "telegram", "channelInstallationId": "79e4b624-9281-48a7-b8fb-a977f509c962", "renderProfileId": "shop.telegram.v1", "isolationProfile": "logical", "machineVersion": "shop-agent.v1", "configVersion": 1, "policyVersion": 1,
+          "policyCapabilities": ["catalog.search", "brain.relations.read", "customer_accounts.orders.read", "labels.shipments.read"],
+          "providerBindings": {
+            "storefront": {"providerKind": "storefront", "bindingId": "7ff2db83-415a-40a9-b5b1-95b44d164fbb", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "customerAccounts": {"providerKind": "customer_accounts", "bindingId": "1867acab-0c3e-44cf-bbb2-d6ab109c8504", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "brainRelations": {"providerKind": "brain_relations", "bindingId": "54d94645-7f69-404f-954e-edeb105bd215", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "labels": {"providerKind": "labels", "bindingId": "d9188e91-b282-4878-a24e-933611c94d84", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"}
+          },
+          "resolutionProofRef": "tenant-resolution:ab868154-5095-4a71-b2bd-4bcc22e968fe"
+        },
+        "brain": {"baseUrl": "http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080", "instanceId": "skirmshop", "apiKeyEnv": "BRAIN_RELATIONS_API_KEY", "allowedOrigins": ["http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080"]},
+        "customerAccounts": {"shopDomain": "skirmshop-spain.myshopify.com", "accessTokenEnv": "SHOPIFY_ADMIN_TOKEN"},
+        "labels": {"baseUrl": "http://labels-shopify-app.skirmshop.svc.cluster.local:3004", "internalApiTokenEnv": "LABELS_INTERNAL_API_TOKEN", "defaultLocale": "es-ES", "allowedOrigins": ["http://labels-shopify-app.skirmshop.svc.cluster.local:3004"]}
+      },
+      {
+        "installationExternalId": "skirmshop-email-support",
+        "channelIngressTokenEnv": "COMMERCE_CHANNEL_TOKEN_EMAIL",
+        "channelIdentityAssertionSecretEnv": "COMMERCE_IDENTITY_SECRET_EMAIL",
+        "storefrontBaseUrl": "https://skirmshop.es",
+        "tenantContext": {
+          "contractType": "tenant_context", "schemaVersion": "1.0", "tenantId": "807a4817-b73a-42ce-8954-8dd5dc80b751", "tenantKey": "skirmshop", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901", "channelKind": "email", "channelInstallationId": "f6486207-d0cc-48b6-b1ff-9123f9d0bd2f", "renderProfileId": "shop.email.v1", "isolationProfile": "logical", "machineVersion": "shop-agent.v1", "configVersion": 1, "policyVersion": 1,
+          "policyCapabilities": ["catalog.search", "brain.relations.read", "customer_accounts.orders.read", "labels.shipments.read"],
+          "providerBindings": {
+            "storefront": {"providerKind": "storefront", "bindingId": "7ff2db83-415a-40a9-b5b1-95b44d164fbb", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "customerAccounts": {"providerKind": "customer_accounts", "bindingId": "1867acab-0c3e-44cf-bbb2-d6ab109c8504", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "brainRelations": {"providerKind": "brain_relations", "bindingId": "54d94645-7f69-404f-954e-edeb105bd215", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"},
+            "labels": {"providerKind": "labels", "bindingId": "d9188e91-b282-4878-a24e-933611c94d84", "storeId": "269d0560-9c16-4db8-86e4-52867efc1901"}
+          },
+          "resolutionProofRef": "tenant-resolution:97f4a69d-9e27-4af3-840f-e2860ae75571"
+        },
+        "brain": {"baseUrl": "http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080", "instanceId": "skirmshop", "apiKeyEnv": "BRAIN_RELATIONS_API_KEY", "allowedOrigins": ["http://brain-product-relations.skirmshop-brain-prod.svc.cluster.local:8080"]},
+        "customerAccounts": {"shopDomain": "skirmshop-spain.myshopify.com", "accessTokenEnv": "SHOPIFY_ADMIN_TOKEN"},
+        "labels": {"baseUrl": "http://labels-shopify-app.skirmshop.svc.cluster.local:3004", "internalApiTokenEnv": "LABELS_INTERNAL_API_TOKEN", "defaultLocale": "es-ES", "allowedOrigins": ["http://labels-shopify-app.skirmshop.svc.cluster.local:3004"]}
+      }
+    ]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skirmshop-chatbot-deterministic
+  namespace: skirmshop
+  annotations:
+    rho.skirmshop.es/activation-gate: image-secrets-brain-e2e
+spec:
+  replicas: 0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxUnavailable: 0, maxSurge: 1 }
+  selector:
+    matchLabels: { app: skirmshop-chatbot-deterministic }
+  template:
+    metadata:
+      labels: { app: skirmshop-chatbot-deterministic }
+    spec:
+      enableServiceLinks: false
+      imagePullSecrets: [{ name: harbor-pull }]
+      nodeSelector: { kubernetes.io/arch: amd64 }
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels: { app: skirmshop-chatbot-deterministic }
+      containers:
+        - name: chatbot
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot:deterministic-b249c69-build-required
+          imagePullPolicy: IfNotPresent
+          command: ["npm", "run", "start"]
+          ports: [{ name: http, containerPort: 3100 }]
+          envFrom:
+            - configMapRef: { name: chatbot-deterministic-config }
+            - secretRef: { name: chatbot-deterministic-secrets }
+          env:
+            - { name: PORT, value: "3100" }
+            - { name: NODE_ENV, value: "production" }
+            - { name: SHOP_AGENT_MODE, value: "deterministic-multitenant" }
+            - { name: SHOPIFY_STORE, value: "skirmshop-spain.myshopify.com" }
+            - { name: SUPPORT_DB_PATH, value: "/tmp/support.db" }
+            - { name: COMMERCE_HA_ENABLED, value: "true" }
+            - { name: REDIS_URL, value: "redis://labels-valkey-master.skirmshop.svc.cluster.local:6379/6" }
+            - { name: COMMERCE_REDIS_KEY_PREFIX, value: "skirmshop:commerce:v1" }
+            - { name: CHAT_TRUSTED_PROXY_IPS, value: "10.42.0.0/16" }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: "1", memory: 768Mi }
+          startupProbe:
+            httpGet: { path: /healthz, port: http }
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 45
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            periodSeconds: 15
+            timeoutSeconds: 2
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skirmshop-chatbot-deterministic
+  namespace: skirmshop
+spec:
+  selector: { app: skirmshop-chatbot-deterministic }
+  ports: [{ name: http, port: 3100, targetPort: http }]
