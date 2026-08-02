@@ -4,7 +4,7 @@ This directory is intentionally absent from `k8s/kustomization.yaml`. It is the
 complete canary declaration, but it must remain outside the live Argo graph
 until all three gates are satisfied:
 
-1. publish and pin an amd64 image containing chatbot commit `b249c69`;
+1. publish and pin an amd64 image containing chatbot commit `c1f7d0d`;
 2. populate `secret/skirmshop/chatbot-deterministic` with every property named
    in `external-secret.yaml` (all channel ingress and identity keys distinct);
 3. deploy and seed the dedicated `brain-product-relations` API, then pass the
