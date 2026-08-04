@@ -1,0 +1,151 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skirmshop-chatbot-deterministic
+  namespace: skirmshop
+  labels:
+    app.kubernetes.io/name: skirmshop-chatbot
+    app.kubernetes.io/instance: deterministic
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: skirmshop-chatbot
+      app.kubernetes.io/instance: deterministic
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: skirmshop-chatbot
+        app.kubernetes.io/instance: deterministic
+    spec:
+      enableServiceLinks: false
+      imagePullSecrets:
+        - name: harbor-pull
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-pool
+                    operator: In
+                    values: [ks5-nvme]
+              - matchExpressions:
+                  - key: role
+                    operator: In
+                    values: [edge]
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: skirmshop-chatbot
+                    app.kubernetes.io/instance: deterministic
+      tolerations:
+        - key: pool
+          operator: Equal
+          value: dev
+          effect: PreferNoSchedule
+        - key: role
+          operator: Equal
+          value: edge
+          effect: NoSchedule
+      containers:
+        - name: chatbot
+          image: harbor.e-dani.com/homelab/skirmshop-chatbot@sha256:431877dac5a7d20166cb6e14333a3cb04a782490185f8e61102744e5dadb3e94
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-lc"]
+          args: ["./scripts/start-gateway.sh"]
+          ports:
+            - name: http
+              containerPort: 3100
+          envFrom:
+            - configMapRef:
+                name: chatbot-deterministic-config
+            - secretRef:
+                name: chatbot-deterministic-secrets
+          env:
+            - name: PORT
+              value: "3100"
+            - name: NODE_ENV
+              value: production
+            - name: BRAIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rag-secrets
+                  key: BRAIN_API_KEY
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rag-litellm-key
+                  key: LITELLM_KEY
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 768Mi
+          startupProbe:
+            httpGet:
+              path: /livez
+              port: http
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skirmshop-chatbot-deterministic
+  namespace: skirmshop
+spec:
+  selector:
+    app.kubernetes.io/name: skirmshop-chatbot
+    app.kubernetes.io/instance: deterministic
+  ports:
+    - name: http
+      port: 3100
+      targetPort: http
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: skirmshop-chatbot-deterministic
+  namespace: skirmshop
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: skirmshop-chatbot
+      app.kubernetes.io/instance: deterministic
