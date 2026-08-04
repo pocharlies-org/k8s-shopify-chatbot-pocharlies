@@ -5,3 +5,6 @@ resources:
   - externalsecret-reporting.yaml
   - cronjobs.yaml
   - ingressroute.yaml
+  - deterministic-config.yaml
+  - deterministic-externalsecret.yaml
+  - deterministic-runtime.yaml
