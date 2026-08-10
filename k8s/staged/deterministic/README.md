@@ -5,7 +5,7 @@ complete canary declaration, but it must remain outside the live Argo graph
 until all three gates are satisfied:
 
 1. publish, verify, and pin by digest an amd64 image containing the exact
-   audited chatbot release commit (`6999c2fd6e3e1fcccd4ea0063b71c1610b858680`);
+   audited chatbot release commit (`8f2820e93d33b2d9df4e33fe305e7b086f148259`);
 2. populate `secret/skirmshop/chatbot-deterministic` with every property named
    in `external-secret.yaml` (all channel ingress and identity keys distinct);
 3. deploy and seed the dedicated `brain-product-relations` API, then pass the
