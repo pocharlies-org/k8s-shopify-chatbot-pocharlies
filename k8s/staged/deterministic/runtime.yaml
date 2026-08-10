@@ -129,7 +129,7 @@ metadata:
   annotations:
     rho.skirmshop.es/activation-gate: image-secrets-brain-e2e
 spec:
-  replicas: 0
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate: { maxUnavailable: 0, maxSurge: 1 }

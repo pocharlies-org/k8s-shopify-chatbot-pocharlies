@@ -5,3 +5,4 @@ resources:
   - externalsecret-reporting.yaml
   - cronjobs.yaml
   - ingressroute.yaml
+  - staged/deterministic

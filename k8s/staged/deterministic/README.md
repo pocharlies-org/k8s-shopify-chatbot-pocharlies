@@ -1,21 +1,11 @@
-# Deterministic multitenant canary (staged, not reconciled)
+# Deterministic multitenant production runtime
 
-This directory is intentionally absent from `k8s/kustomization.yaml`. It is the
-complete canary declaration, but it must remain outside the live Argo graph
-until all three gates are satisfied:
+This directory is part of the live Argo graph. The runtime is pinned to the
+signed `v3.1.15` image built from audited commit
+`f5e5b20b9c40a4a94bcc41e46c4755e1d0a03e90` and runs with two replicas.
 
-1. publish, verify, and pin by digest an amd64 image containing the exact
-   audited chatbot release commit (`f5e5b20b9c40a4a94bcc41e46c4755e1d0a03e90`);
-2. populate `secret/skirmshop/chatbot-deterministic` with every property named
-   in `external-secret.yaml` (all channel ingress and identity keys distinct);
-3. deploy and seed the dedicated `brain-product-relations` API, then pass the
-   web and professional-WhatsApp smoke vectors.
-
-The first two gates are complete: the manifest is pinned to the signed release
-digest and the ExternalSecret is Ready. Keep this directory outside the root
-kustomization, with `replicas: 0`, until the relation projection and the direct
-core API acceptance suite pass. Then add it to the root kustomization and scale
-to two only after `/healthz` is green. The release image starts through its
-package-manager-free entrypoint; the manifest must not override it with `npm`
-or `npx`. Public ingress cutover is a separate, final patch; the legacy service
-remains untouched here.
+Promotion completed after the ExternalSecret, Brain guide reindex, `/healthz`,
+grounded-answer, deterministic-replay, and unsupported-question fail-closed
+gates passed. The public IngressRoute targets this service on port `3100`.
+The legacy `skirmshop-chatbot` Deployment and Service remain deployed as the
+immediate rollback target.

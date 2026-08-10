@@ -21,7 +21,7 @@ spec:
         - name: strip-chatbot
           namespace: traefik-edge
       services:
-        - name: skirmshop-chatbot
-          port: 80
+        - name: skirmshop-chatbot-deterministic
+          port: 3100
   tls:
     store: { name: default, namespace: traefik-edge }
