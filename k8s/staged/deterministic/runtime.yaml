@@ -141,7 +141,7 @@ spec:
     metadata:
       labels: { app: skirmshop-chatbot-deterministic }
       annotations:
-        rho.skirmshop.es/config-revision: "20260812-typed-intent-v1"
+        rho.skirmshop.es/config-revision: "20260812-typed-intent-v2"
     spec:
       enableServiceLinks: false
       imagePullSecrets: [{ name: harbor-pull }]
@@ -154,7 +154,7 @@ spec:
             matchLabels: { app: skirmshop-chatbot-deterministic }
       containers:
         - name: chatbot
-          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.19@sha256:72bb2f2035bd7a8bc7d5456d2dd9eee9250d3e8c6281ed12a2db32c7a737cf95
+          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.20@sha256:91032f364f707d91086aaed4835738f32970d1084728ebde4e34e0b4c5acf8eb
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom:
