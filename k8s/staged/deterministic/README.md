@@ -1,8 +1,8 @@
 # Deterministic multitenant production runtime
 
 This directory is part of the live Argo graph. The runtime is pinned to the
-signed `v3.1.15` image built from audited commit
-`f5e5b20b9c40a4a94bcc41e46c4755e1d0a03e90` and runs with two replicas.
+signed `v3.1.17` image built from audited commit
+`2c04092bd1c02edb5567dcd5942037458f3aaf63` and runs with two replicas.
 
 Promotion completed after the ExternalSecret, Brain guide reindex, `/healthz`,
 grounded-answer, deterministic-replay, and unsupported-question fail-closed
