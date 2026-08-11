@@ -8,6 +8,7 @@ data:
     [
       {
         "installationExternalId": "ymimst-yh.myshopify.com",
+        "storefrontBaseUrl": "https://skirmshop.es",
         "tenantContext": {
           "contractType": "tenant_context",
           "schemaVersion": "1.0",
@@ -139,6 +140,8 @@ spec:
   template:
     metadata:
       labels: { app: skirmshop-chatbot-deterministic }
+      annotations:
+        rho.skirmshop.es/config-revision: "20260811-web-storefront"
     spec:
       enableServiceLinks: false
       imagePullSecrets: [{ name: harbor-pull }]
