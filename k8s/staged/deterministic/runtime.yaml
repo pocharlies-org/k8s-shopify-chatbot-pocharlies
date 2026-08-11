@@ -31,6 +31,7 @@ data:
           "resolutionProofRef": "tenant-resolution:97995dc1-b2bd-4e05-8572-e1ea15c8323a"
         },
         "brain": {"baseUrl": "http://brain-product-relations.skirmshop-product-relations.svc.cluster.local:8080", "instanceId": "skirmshop", "apiKeyEnv": "BRAIN_RELATIONS_API_KEY", "allowedOrigins": ["http://brain-product-relations.skirmshop-product-relations.svc.cluster.local:8080"]},
+        "catalog": {"baseUrl": "http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local", "apiKeyEnv": "BRAIN_CATALOG_API_KEY", "allowedOrigins": ["http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local"]},
         "guides": {"bindingId": "3ead18d6-e694-46fc-b574-f2fcba3a05b5", "baseUrl": "http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local", "apiKeyEnv": "BRAIN_API_KEY", "allowedOrigins": ["http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local"], "sourceAllowedOrigins": ["https://skirmshop.es", "https://www.skirmshop.es"]},
         "customerAccounts": {"shopDomain": "ymimst-yh.myshopify.com", "accessTokenEnv": "SHOPIFY_ADMIN_TOKEN"},
         "labels": {"baseUrl": "http://labels-shopify-app.skirmshop.svc.cluster.local:3004", "internalApiTokenEnv": "LABELS_INTERNAL_API_TOKEN", "defaultLocale": "es-ES", "allowedOrigins": ["http://labels-shopify-app.skirmshop.svc.cluster.local:3004"]}
@@ -150,7 +151,7 @@ spec:
             matchLabels: { app: skirmshop-chatbot-deterministic }
       containers:
         - name: chatbot
-          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.15@sha256:33e52dee37c1ae316e5042e053e98bc2887ef8500dee4a65dfc003beb59d1a77
+          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.16@sha256:bd8c9866756fbb0d7351a9395f31d0a95414a3a3385917eed6db3e8a37245ebf
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom:
