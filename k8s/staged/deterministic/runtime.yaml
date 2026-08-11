@@ -141,7 +141,7 @@ spec:
     metadata:
       labels: { app: skirmshop-chatbot-deterministic }
       annotations:
-        rho.skirmshop.es/config-revision: "20260811-web-storefront"
+        rho.skirmshop.es/config-revision: "20260812-typed-intent-v1"
     spec:
       enableServiceLinks: false
       imagePullSecrets: [{ name: harbor-pull }]
@@ -154,7 +154,7 @@ spec:
             matchLabels: { app: skirmshop-chatbot-deterministic }
       containers:
         - name: chatbot
-          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.18@sha256:d450413fe8f56d6c1510cdf85d4ae672fa9066ec44077c2ed3d7c3abf6056ef0
+          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.19@sha256:72bb2f2035bd7a8bc7d5456d2dd9eee9250d3e8c6281ed12a2db32c7a737cf95
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom:
@@ -170,6 +170,14 @@ spec:
             - { name: REDIS_URL, value: "redis://labels-valkey-master.skirmshop.svc.cluster.local:6379/6" }
             - { name: COMMERCE_REDIS_KEY_PREFIX, value: "skirmshop:commerce:v1" }
             - { name: COMMERCE_TELEGRAM_CUSTOMER_BOT_USERNAME, value: "skirmshop_es_bot" }
+            - { name: COMMERCE_INTENT_CLASSIFIER_ENABLED, value: "true" }
+            - { name: COMMERCE_INTENT_CLASSIFIER_BASE_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
+            - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "tooling" }
+            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "2500" }
+            - { name: COMMERCE_INTENT_CLASSIFIER_MIN_CONFIDENCE, value: "0.8" }
+            - name: COMMERCE_INTENT_CLASSIFIER_API_KEY
+              valueFrom:
+                secretKeyRef: { name: rag-litellm-key, key: LITELLM_KEY }
             - { name: CHAT_TRUSTED_PROXY_IPS, value: "10.42.0.0/16" }
             - name: BRAIN_API_KEY
               valueFrom:
