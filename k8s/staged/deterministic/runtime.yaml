@@ -8,7 +8,7 @@ data:
     [
       {
         "installationExternalId": "ymimst-yh.myshopify.com",
-        "storefrontBaseUrl": "https://skirmshop.es",
+        "storefrontBaseUrl": "https://www.skirmshop.es",
         "tenantContext": {
           "contractType": "tenant_context",
           "schemaVersion": "1.0",
@@ -141,7 +141,7 @@ spec:
     metadata:
       labels: { app: skirmshop-chatbot-deterministic }
       annotations:
-        rho.skirmshop.es/config-revision: "20260812-typed-intent-v2"
+        rho.skirmshop.es/config-revision: "20260812-www-auth-v1"
     spec:
       enableServiceLinks: false
       imagePullSecrets: [{ name: harbor-pull }]
@@ -154,7 +154,7 @@ spec:
             matchLabels: { app: skirmshop-chatbot-deterministic }
       containers:
         - name: chatbot
-          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.20@sha256:91032f364f707d91086aaed4835738f32970d1084728ebde4e34e0b4c5acf8eb
+          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.21@sha256:d591a0ba92c9c8a396073cca8a1f52c1362578c36c4016d07362d337c9c8d230
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom:
