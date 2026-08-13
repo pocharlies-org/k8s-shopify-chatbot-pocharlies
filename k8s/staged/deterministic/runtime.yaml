@@ -183,12 +183,14 @@ spec:
             # Medido 13-08-2026 desde el pod con el payload real: 1,0-1,9 s,
             # 12/12 clasificaciones validas sobre MIN_CONFIDENCE.
             - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "tooling" }
-            # PROVISIONAL: 12 s cabe bajo el timeout de 20 s con el que synapse
-            # llama hoy al runtime. Sube a 60000 en cuanto se sincronice
-            # k8s-synapse-pocharlies f9e0e10 (deterministic_commerce.timeout_s: 90
-            # y fast_ack_seconds: 15); pasarse antes convierte una clasificacion
-            # lenta en handoff, que es peor que el enrutado por reglas.
-            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "12000" }
+            # 60 s de presupuesto porque el residente local encola: abortar corto
+            # no da una respuesta peor, da la MISMA respuesta de siempre (reglas
+            # por palabras clave) sin dejar rastro. El turno entero lo acota
+            # synapse con 90 s (deterministic_commerce.timeout_s), que deja 30 s
+            # para pedido, guias y render; el cliente recibe el fast-ack a los
+            # 15 s. No subir de aqui sin subir tambien los 90 s de synapse:
+            # pasarse de ese techo convierte la lentitud en handoff.
+            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "60000" }
             - { name: COMMERCE_INTENT_CLASSIFIER_MIN_CONFIDENCE, value: "0.8" }
             - name: COMMERCE_INTENT_CLASSIFIER_API_KEY
               valueFrom:
