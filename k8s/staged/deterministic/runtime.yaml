@@ -157,7 +157,7 @@ spec:
             matchLabels: { app: skirmshop-chatbot-deterministic }
       containers:
         - name: chatbot
-          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.22@sha256:58d884220efd1aad5cac459666ee6955cce29c070d7ecd34a1b0e018c01fe481
+          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:v3.1.23@sha256:abb5418cab8b4f61777db40d8adfd843a9f4ff84213b8d67864fc161414076e6
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom:
