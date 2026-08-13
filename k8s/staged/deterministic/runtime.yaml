@@ -175,8 +175,13 @@ spec:
             - { name: COMMERCE_TELEGRAM_CUSTOMER_BOT_USERNAME, value: "skirmshop_es_bot" }
             - { name: COMMERCE_INTENT_CLASSIFIER_ENABLED, value: "true" }
             - { name: COMMERCE_INTENT_CLASSIFIER_BASE_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
-            - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "tooling" }
-            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "2500" }
+            # `tooling` tarda ~57 s en una clasificacion de 20 tokens: con el
+            # abort de 2,5 s el clasificador fallaba SIEMPRE y el motor caia al
+            # enrutado por palabras clave (catch silencioso). Los alias locales
+            # ademas son de razonamiento: con max_tokens=80 gastan el presupuesto
+            # en reasoning_content y devuelven content=null.
+            - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "gpt-5.4-mini" }
+            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "6000" }
             - { name: COMMERCE_INTENT_CLASSIFIER_MIN_CONFIDENCE, value: "0.8" }
             - name: COMMERCE_INTENT_CLASSIFIER_API_KEY
               valueFrom:
