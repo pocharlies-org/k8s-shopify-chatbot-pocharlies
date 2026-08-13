@@ -157,7 +157,7 @@ spec:
             matchLabels: { app: skirmshop-chatbot-deterministic }
       containers:
         - name: chatbot
-          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:chatbot-7adae87@sha256:62d04ccadf341caaa8a0cb7a4e1ad45713f9c821a8a966eac900a518940b3475
+          image: harbor.lan.e-dani.com/homelab/skirmshop-chatbot:chatbot-677eea2ffdce83eb34549e29cd8feb2fb7d9c5ca@sha256:3c85ab3b99216962b7cc386fec564b3fda135baa0e1ce5b0c98737c3f307d169
           imagePullPolicy: IfNotPresent
           ports: [{ name: http, containerPort: 3100 }]
           envFrom:
@@ -175,14 +175,20 @@ spec:
             - { name: COMMERCE_TELEGRAM_CUSTOMER_BOT_USERNAME, value: "skirmshop_es_bot" }
             - { name: COMMERCE_INTENT_CLASSIFIER_ENABLED, value: "true" }
             - { name: COMMERCE_INTENT_CLASSIFIER_BASE_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
-            # `tooling` tarda ~57 s en una clasificacion de 20 tokens: con el
-            # abort de 2,5 s el clasificador fallaba SIEMPRE y el motor caia al
-            # enrutado por palabras clave (catch silencioso). Los alias locales
-            # ademas son de razonamiento: con max_tokens=80 gastan el presupuesto
-            # en reasoning_content y devuelven content=null.
-            - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "gpt-5.4-mini" }
-            # 5.000 ms es el techo que admite env.ts (z.max(5_000)).
-            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "5000" }
+            # Ruta local, como manda DEPLOYMENT.md ("keep the model alias on the
+            # local tooling/dense route"). El failover ya vive en LiteLLM y en dos
+            # capas: CAPABILITY_CHAINS del hook (alias desregistrado) y
+            # router_settings.fallbacks (registrado pero sin deployment sano); las
+            # dos terminan en cloudblue/gpt-5.6-luna.
+            # Medido 13-08-2026 desde el pod con el payload real: 1,0-1,9 s,
+            # 12/12 clasificaciones validas sobre MIN_CONFIDENCE.
+            - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "tooling" }
+            # PROVISIONAL: 12 s cabe bajo el timeout de 20 s con el que synapse
+            # llama hoy al runtime. Sube a 60000 en cuanto se sincronice
+            # k8s-synapse-pocharlies f9e0e10 (deterministic_commerce.timeout_s: 90
+            # y fast_ack_seconds: 15); pasarse antes convierte una clasificacion
+            # lenta en handoff, que es peor que el enrutado por reglas.
+            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "12000" }
             - { name: COMMERCE_INTENT_CLASSIFIER_MIN_CONFIDENCE, value: "0.8" }
             - name: COMMERCE_INTENT_CLASSIFIER_API_KEY
               valueFrom:
