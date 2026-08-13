@@ -181,7 +181,8 @@ spec:
             # ademas son de razonamiento: con max_tokens=80 gastan el presupuesto
             # en reasoning_content y devuelven content=null.
             - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "gpt-5.4-mini" }
-            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "6000" }
+            # 5.000 ms es el techo que admite env.ts (z.max(5_000)).
+            - { name: COMMERCE_INTENT_CLASSIFIER_TIMEOUT_MS, value: "5000" }
             - { name: COMMERCE_INTENT_CLASSIFIER_MIN_CONFIDENCE, value: "0.8" }
             - name: COMMERCE_INTENT_CLASSIFIER_API_KEY
               valueFrom:
