@@ -176,10 +176,9 @@ spec:
             - { name: COMMERCE_INTENT_CLASSIFIER_ENABLED, value: "true" }
             - { name: COMMERCE_INTENT_CLASSIFIER_BASE_URL, value: "http://litellm.litellm.svc.cluster.local:4000/v1" }
             # Ruta local, como manda DEPLOYMENT.md ("keep the model alias on the
-            # local tooling/dense route"). El failover ya vive en LiteLLM y en dos
-            # capas: CAPABILITY_CHAINS del hook (alias desregistrado) y
-            # router_settings.fallbacks (registrado pero sin deployment sano); las
-            # dos terminan en cloudblue/gpt-5.6-luna.
+            # local tooling/dense route"). No hay failover externo: si el residente
+            # local no responde, este consumidor conserva su degradacion
+            # determinista por palabras clave.
             # Medido 13-08-2026 desde el pod con el payload real: 1,0-1,9 s,
             # 12/12 clasificaciones validas sobre MIN_CONFIDENCE.
             - { name: COMMERCE_INTENT_CLASSIFIER_MODEL, value: "tooling" }
