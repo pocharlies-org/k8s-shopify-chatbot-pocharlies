@@ -57,7 +57,7 @@ spec:
             - { name: OPENCLAW_GATEWAY_PORT, value: "18789" }
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom: { secretKeyRef: { name: chatbot-secrets, key: OPENCLAW_GATEWAY_TOKEN } }
-            - { name: BRAIN_URL, value: "https://brain-k8s.lan.e-dani.com" }
+            - { name: BRAIN_URL, value: "https://brain-k8s.e-dani.com" }
             - name: BRAIN_API_KEY
               valueFrom: { secretKeyRef: { name: rag-secrets, key: BRAIN_API_KEY } }
             - name: SHOPIFY_APP_SECRET
