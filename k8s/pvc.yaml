@@ -1,0 +1,17 @@
+# skirmshop-chatbot se retiró el 03-10-2026 (Dani). Solo quedan sus PVC, con el histórico
+# (SQLite de conversaciones y estado), por si hay que consultarlo o volver a encenderlo.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: chatbot-data, namespace: skirmshop }
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path   # longhorn CSI is not on the sauvage edge node; pod is pinned here + single replica
+  resources: { requests: { storage: 1Gi } }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: openclaw-state, namespace: skirmshop }
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources: { requests: { storage: 2Gi } }

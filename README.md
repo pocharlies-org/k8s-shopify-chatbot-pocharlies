@@ -1,21 +1,15 @@
 # k8s-shopify-chatbot-pocharlies
 
-GitOps manifests for **skirmshop-chatbot** (NestJS storefront chat) deployed to the
-`skirmshop` namespace on the k3s cluster, managed by ArgoCD.
+**Retirado el 03-10-2026** (decisión de Dani; uso real nulo: el informe del 02-10 daba 0 sesiones).
 
-## Layout
-- `k8s/manifest.yaml` — Deployment (`skirmshop-chatbot`) + `local-path` PVCs + Service
-- `k8s/ingressroute.yaml` — public route `skirmshop.e-dani.com/chatbot` (traefik-edge, `strip-chatbot` middleware)
-- `k8s/kustomization.yaml`
+`skirmshop-chatbot` era el chat de la tienda (NestJS) en el namespace `skirmshop`: la variante
+`deterministic` servía `skirmshop.e-dani.com/chatbot` y la `skirmshop-chatbot` original quedaba de
+rollback, con los CronJobs `chatbot-sync` y `chatbot-daily-report`. El tema de la tienda dejó de
+cargarlo en `6.0.0-pocharlies.21` (widget flotante, página `/pages/ai` despublicada y caja de
+preguntas de las guías).
 
-## Wiring
-- Runs on the **edge node (`sauvage`)** → reaches the brain via the in-cluster service.
-- `POCHARLIES_URL` → `http://skirmshop-brain.skirmshop-brain-prod.svc.cluster.local` (brain v2)
-- `LLM_BASE_URL` → `http://litellm.litellm.svc.cluster.local:4000/v1`
-- SQLite on a `local-path` PVC (longhorn isn't on the edge node); app self-migrates (`prisma migrate deploy`).
-
-## Secrets
-`chatbot-secrets` (created out-of-band from the app env; TODO: migrate to Vault/ExternalSecret like the sibling apps).
-
-## Image
-`harbor.e-dani.com/homelab/skirmshop-chatbot` — built from `pocharlies/skirmshop-chatbot`.
+Lo único que queda es `k8s/pvc.yaml`: los PVC `chatbot-data` (SQLite de conversaciones) y
+`openclaw-state`, con su histórico. Para volver a encenderlo: recuperar del historial de git los
+manifiestos (`k8s/manifest.yaml`, `k8s/staged/deterministic/`, `k8s/ingressroute.yaml`,
+`k8s/cronjobs.yaml`, `k8s/externalsecret-reporting.yaml`) y `cron/`, y volver a meter el widget en
+el tema.

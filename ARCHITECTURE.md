@@ -1,5 +1,7 @@
 # ARCHITECTURE — k8s-shopify-chatbot-pocharlies
 
+**Retirado el 03-10-2026**: solo quedan los PVC (`k8s/pvc.yaml`); ver README. Lo de abajo describe cómo era.
+
 Despliegue de `skirmshop-chatbot` (chat de tienda en NestJS) en ns `skirmshop`. Código en `pocharlies-org/skirmshop-chatbot` (fuera de la tanda).
 
 ## Clientes y versiones
