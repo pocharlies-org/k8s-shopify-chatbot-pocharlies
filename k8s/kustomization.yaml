@@ -1,8 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+# skirmshop-chatbot retirado el 03-10-2026: solo quedan los PVC con su histórico.
 resources:
-  - manifest.yaml
-  - externalsecret-reporting.yaml
-  - cronjobs.yaml
-  - ingressroute.yaml
-  - staged/deterministic
+  - pvc.yaml
